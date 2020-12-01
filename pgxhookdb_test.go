@@ -16,20 +16,21 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Config ...
+// Config config params
 type Config struct {
 	DatabaseURL string `toml:"database_url"`
 }
 
 func TestHooks(t *testing.T) {
 
-	var config Config
-	if _, err := toml.DecodeFile("config/config.toml", config); err != nil {
+	config := &Config{}
+	if _, err := toml.DecodeFile("examples/config/config.toml", config); err != nil {
 		log.Fatal(err)
 	}
+
 	pool, err := pgxpool.Connect(context.Background(), config.DatabaseURL)
 	if err != nil {
-		t.Fatal("Can't connect to postgresql test database:", err)
+		log.Fatal("Can't connect to postgresql database:", err)
 	}
 	defer pool.Close()
 

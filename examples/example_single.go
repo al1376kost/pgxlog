@@ -5,12 +5,23 @@ import (
 
 	"github.com/al1376kost/pgxlog"
 
+	"github.com/BurntSushi/toml"
 	"github.com/jackc/pgx/v4/pgxpool"
 	log "github.com/sirupsen/logrus"
 )
 
+// Config config params
+type Config struct {
+	DatabaseURL string `toml:"database_url"`
+}
+
 func main() {
-	db, err := pgxpool.Connect(context.Background(), "user=postgres dbname=postgres host=postgres sslmode=disable")
+	config := &Config{}
+	if _, err := toml.DecodeFile("./config/config.toml", config); err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := pgxpool.Connect(context.Background(), config.DatabaseURL)
 	if err != nil {
 		log.Fatal("Can't connect to postgresql database:", err)
 	}
