@@ -1,6 +1,6 @@
-# fork from PostgreSQL Hook for Logrus(https://github.com/gemnasium/logrus-postgresql-hook)
+# Fork from [PostgreSQL Hook for Logrus](https://github.com/gemnasium/logrus-postgresql-hook)
 
-# PostgreSQL (github.com/jackc/pgx/pgxpool) Hook for [Logrus](https://github.com/sirupsen/logrus)
+# [PostgreSQL](github.com/jackc/pgx/pgxpool) Hook for [Logrus](https://github.com/sirupsen/logrus)
 
 Use this hook to send your logs to [postgresql](http://postgresql.org) server.
 
