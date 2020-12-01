@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/sirupsen/logrus"
 )
@@ -61,6 +62,28 @@ func TestHooks(t *testing.T) {
 
 			if h, ok := hook.(*AsyncHook); ok {
 				h.FlushEvery(100 * time.Millisecond)
+				h.InsertFunc = func(txn pgx.Tx, entry *logrus.Entry) error {
+					jsonData, err := json.Marshal(entry.Data)
+					if err != nil {
+						return err
+					}
+
+					_, err = txn.Exec(context.Background(), "INSERT INTO adm.logs_test(level_id, message, message_data) VALUES ($1,$2,$3);", entry.Level, entry.Message, jsonData)
+					return err
+				}
+
+			} else if h, ok := hook.(*Hook); ok {
+
+				h.InsertFunc = func(db *pgxpool.Pool, entry *logrus.Entry) error {
+					jsonData, err := json.Marshal(entry.Data)
+					if err != nil {
+						return err
+					}
+
+					_, err = db.Exec(context.Background(), "INSERT INTO adm.logs_test(level_id, message, message_data) VALUES ($1,$2,$3);", entry.Level, entry.Message, jsonData)
+					return err
+				}
+
 			}
 
 			// Purge our test DB
